@@ -1,6 +1,7 @@
 package com.example.moviereview.controller;
 
 import com.example.moviereview.movieList.Movie;
+import com.example.moviereview.movieList.comment.Comment;
 import com.example.moviereview.movieList.service.MovieListService;
 import com.example.moviereview.naver.dto.SearchMovieRes;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +25,16 @@ public class ApiController {
 
     }
 
+    @PostMapping("/comment")
+    public void addComment(@RequestParam String title, @RequestParam String content){
 
-    @PostMapping
+         movieListService.addCommentByTitle(title, content);
+
+    }
+
+
+
+    @PostMapping("/add")
     public Movie addMovie(@RequestBody Movie movie){
 
         return  movieListService.addToMovieList(movie);
@@ -34,9 +43,12 @@ public class ApiController {
 
 
     @GetMapping("/get")
-    public List<Movie> getFindMovie(){
+    public List<Movie> findMovie(){
 
-        return  movieListService.getMovieList();
+        var result = movieListService.getMovieList();
+        result.forEach(System.out::println);
+        return  result;
+
 
     }
 
@@ -44,6 +56,13 @@ public class ApiController {
     public void deleteMovie(@PathVariable int id){
 
        movieListService.deleteMovie(id);
+
+    }
+
+    @DeleteMapping("/delete/comment/{id}")
+    public void deleteComment(@PathVariable int id){
+
+        movieListService.deleteComment(id);
 
     }
 }

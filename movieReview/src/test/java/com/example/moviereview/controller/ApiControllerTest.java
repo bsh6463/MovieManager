@@ -3,6 +3,7 @@ package com.example.moviereview.controller;
 import com.example.moviereview.movieList.Movie;
 import com.example.moviereview.movieList.service.MovieListService;
 import com.example.moviereview.naver.dto.SearchMovieRes;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,10 +16,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
+@NoArgsConstructor
 @SpringBootTest
 class ApiControllerTest {
 
-    private final MovieListService movieListService;
+    private MovieListService movieListService;
 
     @Test
     @GetMapping("/search")

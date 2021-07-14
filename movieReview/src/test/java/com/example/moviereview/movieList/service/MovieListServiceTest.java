@@ -1,7 +1,9 @@
 package com.example.moviereview.movieList.service;
 
 import com.example.moviereview.movieList.Movie;
+import com.example.moviereview.movieList.comment.Comment;
 import com.example.moviereview.movieList.repository.MovieRepository;
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,15 +1,16 @@
 package com.example.moviereview.movieList;
 
 
+import com.example.moviereview.movieList.comment.Comment;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -21,6 +22,7 @@ public class Movie {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+
     private String title;
     private String link;
     private String image;
@@ -29,5 +31,10 @@ public class Movie {
     private String director;
     private String actor;
     private String userRating;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "movie_id")
+    @ToString.Exclude
+    private List<Comment> comments = new ArrayList<>();
 
 }
