@@ -17,11 +17,15 @@ spring:
       hibernate:
         format_sql: true
     generate-ddl: true
+    hibernate:
+      ddl-auto: create-drop
 
   datasource:
     url: jdbc:mysql://localhost:3306/movie_manager
     username: root
     password: bae94116125!
-    initialization-mode: always
+  sql:
+    init:
+      mode: always
 
 

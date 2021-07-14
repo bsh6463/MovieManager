@@ -65,7 +65,8 @@ public class NaverClient {
                 uri,
                 HttpMethod.GET,
                 httpEntity,
-               responseType);
+               responseType
+        );
 
         return responseEntity.getBody();
 
