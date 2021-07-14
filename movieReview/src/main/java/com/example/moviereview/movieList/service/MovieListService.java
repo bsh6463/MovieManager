@@ -1,8 +1,10 @@
 package com.example.moviereview.movieList.service;
 
 
-import com.example.moviereview.movieList.Movie;
-import com.example.moviereview.movieList.comment.Comment;
+import com.example.moviereview.movieList.dto.CommentDTO;
+import com.example.moviereview.movieList.dto.MovieDTO;
+import com.example.moviereview.movieList.movie.MovieEntity;
+import com.example.moviereview.movieList.comment.CommentEntity;
 import com.example.moviereview.movieList.repository.CommentRepository;
 import com.example.moviereview.movieList.repository.MovieRepository;
 import com.example.moviereview.naver.dto.SearchMovieReq;
@@ -13,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,24 +27,48 @@ public class MovieListService {
     private final MovieRepository movieRepository;
     private final NaverClient naverClient;
     private final CommentRepository commentRepository;
+    private final EntityManager entityManager;
 
 
     //add to list
-    public Movie addToMovieList(Movie movie){
+    public MovieDTO addToMovieList(MovieDTO movieDTO){
 
-        movieRepository.save(movie);
+        var movieEntity = movieDTOToEntity(movieDTO);
 
-        return movie;
+        movieRepository.saveAndFlush(movieEntity);
 
-    }
-
-
-    public List<Movie> getMovieList() {
-
-
-        return movieRepository.findAll();
+        return movieDTO;
 
     }
+
+
+    public List<MovieDTO> getMovieList() {
+
+
+        var movieEntities= movieRepository.findAll();
+        List<MovieDTO> movieDTOList = new ArrayList<>();
+
+        for(int i = 0; i < movieEntities.size(); i++){
+
+            movieDTOList.add(movieEntityToDTO(movieEntities.get(i)));
+
+        }
+
+        return movieDTOList;
+    }
+
+    public MovieDTO findMovieById(int id){
+
+        var movieEntity = movieRepository.findById(id).get();
+        return movieEntityToDTO(movieEntity);
+    }
+
+    public MovieDTO findMovieByTitle(String title) {
+
+        var movieEntity = movieRepository.findByTitleContains(title);
+        return movieEntityToDTO(movieEntity);
+    }
+
 
     public SearchMovieRes searhMovie(String query){
 
@@ -60,17 +88,16 @@ public class MovieListService {
     @Transactional
     public void addCommentById(int id, String content){
 
-        Comment comment = new Comment();
-        comment.setContent(content);
+        CommentEntity commentEntity = new CommentEntity();
+        commentEntity.setContent(content);
+        commentRepository.save(commentEntity);
 
+        var movieEntity = movieRepository.findById(id).get();
 
-        Movie movie  = movieRepository.findById(id).get();
+        movieEntity.getCommentEntities().add(commentEntity);
 
-
-        movie.getComments().add(comment);
-
-        commentRepository.save(comment);
-        movieRepository.save(movie);
+        commentRepository.save(commentEntity);
+        movieRepository.save(movieEntity);
 
         commentRepository.flush();
         movieRepository.flush();
@@ -79,44 +106,108 @@ public class MovieListService {
     @Transactional
     public void addCommentByTitle(String title, String content){
 
-        Comment comment = new Comment();
-        comment.setContent(content);
+        CommentEntity commentEntity = new CommentEntity();
+        commentEntity.setContent(content);
+        commentRepository.save(commentEntity);
 
+        //var movieEntity = movieRepository.findByTitle(title);
+        var movieEntity = movieRepository.findByTitleContains(title);
+        movieEntity.getCommentEntities().add(commentEntity);
 
-        Movie movie  = movieRepository.findByTitle(title);
-
-
-        movie.getComments().add(comment);
-
-        commentRepository.save(comment);
-        movieRepository.save(movie);
-
-        commentRepository.flush();
-        movieRepository.flush();
-    }
-
-
-    @Transactional
-    public void addCommentByTitle2(String title, Comment comment){
-
-        //Comment comment = new Comment();
-        //comment.setContent(content);
-
-
-        Movie movie  = movieRepository.findByTitle(title);
-
-
-        movie.getComments().add(comment);
-
-        commentRepository.save(comment);
-        movieRepository.save(movie);
+        commentRepository.save(commentEntity);
+        movieRepository.save(movieEntity);
 
         commentRepository.flush();
         movieRepository.flush();
+
     }
+
+
 
     public void deleteComment(int id) {
 
         commentRepository.deleteById(id);
     }
+
+    public MovieDTO movieEntityToDTO(MovieEntity movieEntity){
+
+        var dto = new MovieDTO();
+        dto.setTitle(movieEntity.getTitle());
+        dto.setActor(movieEntity.getActor());
+        dto.setDirector(movieEntity.getDirector());
+        dto.setId(movieEntity.getId());
+        dto.setImage(movieEntity.getImage());
+        dto.setLink(movieEntity.getLink());
+        dto.setSubtitle(movieEntity.getSubtitle());
+        dto.setUserRating(movieEntity.getUserRating());
+        dto.setCommentDTOs(commentEntityToDtoList(movieEntity.getCommentEntities()));
+
+        return dto;
+    }
+
+    public MovieEntity movieDTOToEntity(MovieDTO movieDTO){
+
+        var entity = new MovieEntity();
+        entity.setTitle(movieDTO.getTitle());
+        entity.setActor(movieDTO.getActor());
+        entity.setDirector(movieDTO.getDirector());
+        entity.setId(movieDTO.getId());
+        entity.setImage(movieDTO.getImage());
+        entity.setLink(movieDTO.getLink());
+        entity.setSubtitle(movieDTO.getSubtitle());
+        entity.setUserRating(movieDTO.getUserRating());
+        entity.setCommentEntities(commentDtoToEntityList(movieDTO.getCommentDTOs()));
+
+        return entity;
+
+    }
+
+    public CommentDTO commentEntityToDTO(CommentEntity commentEntity){
+
+        var dto = new CommentDTO();
+        dto.setContent(commentEntity.getContent());
+        dto.setId(commentEntity.getId());
+
+        return dto;
+    }
+
+    public CommentEntity commentDTOToEntity(CommentDTO commentDTO){
+
+        var entity = new CommentEntity();
+        entity.setContent(commentDTO.getContent());
+        entity.setId(commentDTO.getId());
+
+        return entity;
+    }
+
+
+
+    public List<CommentDTO> commentEntityToDtoList(List<CommentEntity> commentEntityList){
+
+        List<CommentDTO> commentDTOList = new ArrayList<>();
+
+        for(int i=0;i<commentEntityList.size();i++){
+
+            var temp = commentEntityList.get(i);
+            commentDTOList.add(commentEntityToDTO(temp));
+        }
+
+        return commentDTOList;
+    }
+
+    public List<CommentEntity> commentDtoToEntityList(List<CommentDTO> commentDTOList){
+
+        List<CommentEntity> commentEntityList = new ArrayList<>();
+
+        for(int i=0;i<commentDTOList.size();i++){
+
+            var temp = commentDTOList.get(i);
+            commentEntityList.add(commentDTOToEntity(temp));
+        }
+
+        return commentEntityList;
+    }
+
+
+
 }

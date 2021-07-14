@@ -1,11 +1,10 @@
 package com.example.moviereview.controller;
 
-import com.example.moviereview.movieList.Movie;
-import com.example.moviereview.movieList.comment.Comment;
+import com.example.moviereview.movieList.dto.MovieDTO;
+import com.example.moviereview.movieList.movie.MovieEntity;
 import com.example.moviereview.movieList.service.MovieListService;
 import com.example.moviereview.naver.dto.SearchMovieRes;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,25 +24,44 @@ public class ApiController {
 
     }
 
-    @PostMapping("/comment")
-    public void addComment(@RequestParam String title, @RequestParam String content){
+    @GetMapping("/find/id")
+    public MovieDTO findMovieById(@RequestParam int id){
+
+        return movieListService.findMovieById(id);
+    }
+
+    @GetMapping("/find/title")
+    public MovieDTO findMovieByTitle(@RequestParam String title){
+
+        return movieListService.findMovieByTitle(title);
+    }
+
+    @PostMapping("/comment/title")
+    public void addCommentByTitle(@RequestParam String title, @RequestParam String content){
 
          movieListService.addCommentByTitle(title, content);
+
+    }
+    @PostMapping("/comment/id")
+    public void addCommentByTitle(@RequestParam int id, @RequestParam String content){
+
+        movieListService.addCommentById(id, content);
 
     }
 
 
 
-    @PostMapping("/add")
-    public Movie addMovie(@RequestBody Movie movie){
 
-        return  movieListService.addToMovieList(movie);
+    @PostMapping("/add")
+    public MovieDTO addMovie(@RequestBody MovieDTO movieDTO){
+
+        return  movieListService.addToMovieList(movieDTO);
     }
 
 
 
     @GetMapping("/get")
-    public List<Movie> findMovie(){
+    public List<MovieDTO> findMovie(){
 
         var result = movieListService.getMovieList();
         result.forEach(System.out::println);
