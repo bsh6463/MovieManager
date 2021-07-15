@@ -16,7 +16,11 @@ import java.util.List;
 public class MovieDTO {
 
     private int id;
+
     private String title;
+
+    private String message;
+
 
     @Nullable
     private String link;

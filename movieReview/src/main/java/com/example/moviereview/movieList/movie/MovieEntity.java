@@ -23,6 +23,7 @@ public class MovieEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    private String message;
 
     private String title;
     @Nullable

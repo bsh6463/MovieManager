@@ -66,17 +66,45 @@ public class MovieListService {
     public MovieDTO findMovieByTitle(String title) {
 
         var movieEntity = movieRepository.findByTitleContains(title);
-        return movieEntityToDTO(movieEntity);
+
+
+        if(movieEntity  != null){
+            return movieEntityToDTO(movieEntity);
+        }
+        else {
+            movieEntity.setMessage("검색 결과가 없습니다.");
+            return movieEntityToDTO(movieEntity);
+        }
+
     }
 
 
-    public SearchMovieRes searhMovie(String query){
+    public MovieDTO searchMovie(String query){
 
         SearchMovieReq searchMovieReq = new SearchMovieReq();
         searchMovieReq.setQuery(query);
 
-        return naverClient.searchMovie(searchMovieReq);
+        SearchMovieRes searchMovieRes = naverClient.searchMovie(searchMovieReq);
 
+        MovieDTO movieDTO = new MovieDTO();
+
+        if(searchMovieRes.getItems().isEmpty()){
+
+            movieDTO.setMessage("검색 결과가 없습니다.");
+            return  movieDTO;
+        }
+        else{
+
+            movieDTO.setTitle(searchMovieRes.getItems().stream().findFirst().get().getTitle());
+            movieDTO.setActor(searchMovieRes.getItems().stream().findFirst().get().getActor());
+            movieDTO.setDirector(searchMovieRes.getItems().stream().findFirst().get().getDirector());
+            movieDTO.setLink(searchMovieRes.getItems().stream().findFirst().get().getLink());
+            movieDTO.setSubtitle(searchMovieRes.getItems().stream().findFirst().get().getSubtitle());
+            movieDTO.setImage(searchMovieRes.getItems().stream().findFirst().get().getImage());
+            movieDTO.setUserRating(searchMovieRes.getItems().stream().findFirst().get().getUserRating());
+
+            return movieDTO;
+        }
     }
 
     public void deleteMovie(int id){

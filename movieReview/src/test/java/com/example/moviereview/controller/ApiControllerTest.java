@@ -33,9 +33,9 @@ class ApiControllerTest {
 
 
     @Test
-    public SearchMovieRes movieSearch(@RequestParam String query){
+    public MovieDTO movieSearch(@RequestParam String query){
 
-        return movieListService.searhMovie(query);
+        return movieListService.searchMovie(query);
 
     }
 

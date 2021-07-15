@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -14,9 +15,17 @@ import java.util.List;
 @Slf4j
 public class SearchMovieRes {
 
+    private int display;
+
+    private int start;
+
+    private int total;
+
     private String lastBuildDate;
 
     private List<Item> items;
+
+
 
 
     @Data
@@ -28,7 +37,7 @@ public class SearchMovieRes {
         private String link;
         private String image;
         private String subtitle;
-        private LocalDate pubDate;
+        private String pubDate;
         private String director;
         private String actor;
         private String userRating;

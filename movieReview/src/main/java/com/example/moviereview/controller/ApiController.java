@@ -1,7 +1,6 @@
 package com.example.moviereview.controller;
 
 import com.example.moviereview.movieList.dto.MovieDTO;
-import com.example.moviereview.movieList.movie.MovieEntity;
 import com.example.moviereview.movieList.service.MovieListService;
 import com.example.moviereview.naver.dto.SearchMovieRes;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +17,9 @@ public class ApiController {
     private final MovieListService movieListService;
 
     @GetMapping("/search")
-    public SearchMovieRes movieSearch(@RequestParam String query){
+    public MovieDTO movieSearch(@RequestParam String query){
 
-       return movieListService.searhMovie(query);
+       return movieListService.searchMovie(query);
 
     }
 

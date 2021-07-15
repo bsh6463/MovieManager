@@ -21,6 +21,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.net.URL;
 import java.net.http.HttpRequest;
+import java.time.LocalDate;
 
 
 @Component
@@ -40,11 +41,20 @@ public class NaverClient {
 
 
         //url 생성
-        URI uri = UriComponentsBuilder.fromUriString(naverMovieSearchUrl)
-                .queryParams(searchMovieReq.makeQuery())
-                .build()
-                .encode()
-                .toUri();
+//        URI uri = UriComponentsBuilder.fromUriString(naverMovieSearchUrl)
+//                .queryParams(searchMovieReq.makeQuery())
+//                .build()
+//                .encode()
+//                .toUri();
+
+        URI uri = UriComponentsBuilder
+                .fromUriString(naverMovieSearchUrl)
+                .queryParam("query", searchMovieReq.getQuery())
+                .queryParam("display", 10)
+                .queryParam("start", 1)
+                .queryParam("yearfrom", 1000)
+                .queryParam("yearto", LocalDate.now().getYear())
+                .build().encode().toUri();
 
         //JSON형태 header생성
         var headers = new HttpHeaders();
