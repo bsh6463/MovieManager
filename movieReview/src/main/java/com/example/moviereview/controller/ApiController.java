@@ -2,7 +2,6 @@ package com.example.moviereview.controller;
 
 import com.example.moviereview.movieList.dto.MovieDTO;
 import com.example.moviereview.movieList.service.MovieListService;
-import com.example.moviereview.naver.dto.SearchMovieRes;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,19 +35,17 @@ public class ApiController {
     }
 
     @PostMapping("/comment/title")
-    public void addCommentByTitle(@RequestParam String title, @RequestParam String content){
+    public MovieDTO addCommentByTitle(@RequestParam String title, @RequestParam String content){
 
-         movieListService.addCommentByTitle(title, content);
+         return movieListService.addCommentByTitle(title, content);
 
     }
     @PostMapping("/comment/id")
-    public void addCommentByTitle(@RequestParam int id, @RequestParam String content){
+    public MovieDTO addCommentByTitle(@RequestParam int id, @RequestParam String content){
 
-        movieListService.addCommentById(id, content);
+        return movieListService.addCommentById(id, content);
 
     }
-
-
 
 
     @PostMapping("/add")
@@ -69,10 +66,10 @@ public class ApiController {
 
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/movie/{id}")
     public void deleteMovie(@PathVariable int id){
 
-       movieListService.deleteMovie(id);
+       movieListService.deleteMovieWithId(id);
 
     }
 

@@ -2,6 +2,7 @@ package com.example.moviereview.movieList.movie;
 
 
 import com.example.moviereview.movieList.comment.CommentEntity;
+import com.example.moviereview.util.StatementCode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,7 @@ public class MovieEntity {
     private int id;
 
     private String message;
+    private StatementCode statementCode;
 
     private String title;
     @Nullable

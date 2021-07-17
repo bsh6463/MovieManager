@@ -1,6 +1,7 @@
 package com.example.moviereview.movieList.dto;
 
 import com.example.moviereview.movieList.comment.CommentEntity;
+import com.example.moviereview.util.StatementCode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,8 @@ public class MovieDTO {
     private String title;
 
     private String message;
+
+    private StatementCode statementCode;
 
 
     @Nullable

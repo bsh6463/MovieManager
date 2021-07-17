@@ -31,7 +31,7 @@ class MovieEntityListServiceTest {
 
         movieListService.getMovieList().forEach(System.out::println);
 
-        movieListService.deleteMovie(1);
+        movieListService.deleteMovieWithId(1);
 
         movieListService.getMovieList().forEach(System.out::println);
 

@@ -10,8 +10,10 @@ import com.example.moviereview.movieList.repository.MovieRepository;
 import com.example.moviereview.naver.dto.SearchMovieReq;
 import com.example.moviereview.naver.dto.SearchMovieRes;
 import com.example.moviereview.naver.naverClient.NaverClient;
+import com.example.moviereview.util.StatementCode;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,7 @@ import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @Data
 @RequiredArgsConstructor
@@ -46,21 +49,43 @@ public class MovieListService {
 
 
         var movieEntities= movieRepository.findAll();
-        List<MovieDTO> movieDTOList = new ArrayList<>();
 
-        for(int i = 0; i < movieEntities.size(); i++){
+        if(movieEntities.stream().findFirst().isPresent()){
 
-            movieDTOList.add(movieEntityToDTO(movieEntities.get(i)));
+            List<MovieDTO> movieDTOList = new ArrayList<>();
 
+            for(int i = 0; i < movieEntities.size(); i++){
+
+                movieDTOList.add(movieEntityToDTO(movieEntities.get(i)));
+
+            }
+
+            return movieDTOList;
+
+        }else { //null인경우
+
+            List<MovieDTO> movieDTOList = new ArrayList<>();
+            var movieDTO = new MovieDTO();
+            movieDTO.setStatementCode(StatementCode.SC_NoResult);
+            movieDTOList.add(movieDTO);
+            return  movieDTOList;
         }
 
-        return movieDTOList;
     }
 
     public MovieDTO findMovieById(int id){
 
-        var movieEntity = movieRepository.findById(id).get();
-        return movieEntityToDTO(movieEntity);
+        var tempMovieEntity = movieRepository.findById(id);
+        if(tempMovieEntity.isPresent()){
+            var movieEntity = tempMovieEntity.get();
+
+            return movieEntityToDTO(movieEntity);
+        }
+        else {
+
+            return noSearchResultInfoId(id);
+        }
+
     }
 
     public MovieDTO findMovieByTitle(String title) {
@@ -68,12 +93,12 @@ public class MovieListService {
         var movieEntity = movieRepository.findByTitleContains(title);
 
 
-        if(movieEntity  != null){
+        if(movieEntity != null){
             return movieEntityToDTO(movieEntity);
         }
         else {
-            movieEntity.setMessage("검색 결과가 없습니다.");
-            return movieEntityToDTO(movieEntity);
+
+            return noSearchResultInfoTitle(title);
         }
 
     }
@@ -86,67 +111,99 @@ public class MovieListService {
 
         SearchMovieRes searchMovieRes = naverClient.searchMovie(searchMovieReq);
 
-        MovieDTO movieDTO = new MovieDTO();
 
-        if(searchMovieRes.getItems().isEmpty()){
+        if(searchMovieRes.getTotal() > 0){
+            //naver 영화 검색 결과가 존재
+            MovieDTO movieDTO = new MovieDTO();
 
-            movieDTO.setMessage("검색 결과가 없습니다.");
-            return  movieDTO;
+            var temp = searchMovieRes.getItems().stream().findFirst();
+
+            if(temp.isPresent()) {
+
+                movieDTO.setTitle(temp.get().getTitle());
+                movieDTO.setActor(temp.get().getActor());
+                movieDTO.setDirector(temp.get().getDirector());
+                movieDTO.setLink(temp.get().getLink());
+                movieDTO.setSubtitle(temp.get().getSubtitle());
+                movieDTO.setImage(temp.get().getImage());
+                movieDTO.setUserRating(temp.get().getUserRating());
+
+            }
+            return movieDTO;
         }
         else{
+            //naver 영화 검색 결과가 없음
+            log.info("{} 의 Naver 영화검색 결과가 없습니다.",query);
+            MovieDTO movieDTO = new MovieDTO();
+            movieDTO.setStatementCode(StatementCode.SC_NoResult);
 
-            movieDTO.setTitle(searchMovieRes.getItems().stream().findFirst().get().getTitle());
-            movieDTO.setActor(searchMovieRes.getItems().stream().findFirst().get().getActor());
-            movieDTO.setDirector(searchMovieRes.getItems().stream().findFirst().get().getDirector());
-            movieDTO.setLink(searchMovieRes.getItems().stream().findFirst().get().getLink());
-            movieDTO.setSubtitle(searchMovieRes.getItems().stream().findFirst().get().getSubtitle());
-            movieDTO.setImage(searchMovieRes.getItems().stream().findFirst().get().getImage());
-            movieDTO.setUserRating(searchMovieRes.getItems().stream().findFirst().get().getUserRating());
-
-            return movieDTO;
+            return  movieDTO;
         }
     }
 
-    public void deleteMovie(int id){
+    public void deleteMovieWithId(int id) {
 
         movieRepository.deleteById(id);
     }
 
 
     @Transactional
-    public void addCommentById(int id, String content){
+    public MovieDTO addCommentById(int id, String content){
 
         CommentEntity commentEntity = new CommentEntity();
         commentEntity.setContent(content);
         commentRepository.save(commentEntity);
 
-        var movieEntity = movieRepository.findById(id).get();
+        var tempMovieEntity = movieRepository.findById(id);
 
-        movieEntity.getCommentEntities().add(commentEntity);
+        if(tempMovieEntity.isPresent()){
+            var movieEntity = tempMovieEntity.get();
+            movieEntity.getCommentEntities().add(commentEntity);
 
-        commentRepository.save(commentEntity);
-        movieRepository.save(movieEntity);
+            commentRepository.save(commentEntity);
+            movieRepository.save(movieEntity);
 
-        commentRepository.flush();
-        movieRepository.flush();
+            commentRepository.flush();
+            movieRepository.flush();
+
+            return movieEntityToDTO(movieEntity);
+        }
+        else {
+
+            return noSearchResultInfoId(id);
+        }
+
+
+
     }
 
     @Transactional
-    public void addCommentByTitle(String title, String content){
+    public MovieDTO addCommentByTitle(String title, String content){
 
         CommentEntity commentEntity = new CommentEntity();
         commentEntity.setContent(content);
         commentRepository.save(commentEntity);
 
-        //var movieEntity = movieRepository.findByTitle(title);
+
         var movieEntity = movieRepository.findByTitleContains(title);
-        movieEntity.getCommentEntities().add(commentEntity);
 
-        commentRepository.save(commentEntity);
-        movieRepository.save(movieEntity);
+        if(movieEntity != null){
 
-        commentRepository.flush();
-        movieRepository.flush();
+            movieEntity.getCommentEntities().add(commentEntity);
+
+            commentRepository.save(commentEntity);
+            movieRepository.save(movieEntity);
+
+            commentRepository.flush();
+            movieRepository.flush();
+
+            return movieEntityToDTO(movieEntity);
+
+        }
+        else {
+
+           return noSearchResultInfoTitle(title);
+        }
 
     }
 
@@ -154,7 +211,8 @@ public class MovieListService {
 
     public void deleteComment(int id) {
 
-        commentRepository.deleteById(id);
+            commentRepository.deleteById(id);
+
     }
 
     public MovieDTO movieEntityToDTO(MovieEntity movieEntity){
@@ -184,10 +242,10 @@ public class MovieListService {
         entity.setLink(movieDTO.getLink());
         entity.setSubtitle(movieDTO.getSubtitle());
         entity.setUserRating(movieDTO.getUserRating());
-        entity.setCommentEntities(commentDtoToEntityList(movieDTO.getCommentDTOs()));
-
+        if(movieDTO.getCommentDTOs() != null){
+            entity.setCommentEntities(commentDtoToEntityList(movieDTO.getCommentDTOs()));
+        }
         return entity;
-
     }
 
     public CommentDTO commentEntityToDTO(CommentEntity commentEntity){
@@ -237,5 +295,18 @@ public class MovieListService {
     }
 
 
+    public MovieDTO noSearchResultInfoId(int id){
+        log.info("id : {} 인 Movie/Comment가 DB에 없습니다.", id);
+        MovieDTO movieDTO = new MovieDTO();
+        movieDTO.setStatementCode(StatementCode.SC_NoResult);
+        return movieDTO;
+    }
+
+    public MovieDTO noSearchResultInfoTitle(String title){
+        log.info("제목 : {}인 Movie가 DB에 없습니다.", title);
+        MovieDTO movieDTO = new MovieDTO();
+        movieDTO.setStatementCode(StatementCode.SC_NoResult);
+        return movieDTO;
+    }
 
 }

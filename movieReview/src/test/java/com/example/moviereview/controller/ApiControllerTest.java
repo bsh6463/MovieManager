@@ -4,7 +4,6 @@ import com.example.moviereview.movieList.dto.MovieDTO;
 import com.example.moviereview.movieList.movie.MovieEntity;
 import com.example.moviereview.movieList.repository.MovieRepository;
 import com.example.moviereview.movieList.service.MovieListService;
-import com.example.moviereview.naver.dto.SearchMovieRes;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
@@ -61,7 +60,7 @@ class ApiControllerTest {
     @Test
     public void deleteMovie(@PathVariable int id){
 
-        movieListService.deleteMovie(id);
+        movieListService.deleteMovieWithId(id);
 
     }
 
