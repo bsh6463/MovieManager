@@ -10,7 +10,7 @@ import com.example.moviereview.movieList.repository.MovieRepository;
 import com.example.moviereview.naver.dto.SearchMovieReq;
 import com.example.moviereview.naver.dto.SearchMovieRes;
 import com.example.moviereview.naver.naverClient.NaverClient;
-import com.example.moviereview.util.StatementCode;
+import com.example.moviereview.util.StateCode;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +40,8 @@ public class MovieListService {
 
         movieRepository.saveAndFlush(movieEntity);
 
+        movieDTO.setStateCode(StateCode.SC_OK);
+
         return movieDTO;
 
     }
@@ -66,7 +68,7 @@ public class MovieListService {
 
             List<MovieDTO> movieDTOList = new ArrayList<>();
             var movieDTO = new MovieDTO();
-            movieDTO.setStatementCode(StatementCode.SC_NoResult);
+            movieDTO.setStateCode(StateCode.SC_NoResult);
             movieDTOList.add(movieDTO);
             return  movieDTOList;
         }
@@ -78,8 +80,9 @@ public class MovieListService {
         var tempMovieEntity = movieRepository.findById(id);
         if(tempMovieEntity.isPresent()){
             var movieEntity = tempMovieEntity.get();
-
-            return movieEntityToDTO(movieEntity);
+            var movieDTO = movieEntityToDTO(movieEntity);
+            movieDTO.setStateCode(StateCode.SC_OK);
+            return movieDTO;
         }
         else {
 
@@ -120,7 +123,7 @@ public class MovieListService {
 
             if(temp.isPresent()) {
 
-                movieDTO.setTitle(temp.get().getTitle());
+                movieDTO.setTitle(temp.get().getTitle().replaceAll("<[^>]*>",""));
                 movieDTO.setActor(temp.get().getActor());
                 movieDTO.setDirector(temp.get().getDirector());
                 movieDTO.setLink(temp.get().getLink());
@@ -135,7 +138,7 @@ public class MovieListService {
             //naver 영화 검색 결과가 없음
             log.info("{} 의 Naver 영화검색 결과가 없습니다.",query);
             MovieDTO movieDTO = new MovieDTO();
-            movieDTO.setStatementCode(StatementCode.SC_NoResult);
+            movieDTO.setStateCode(StateCode.SC_NoResult);
 
             return  movieDTO;
         }
@@ -298,14 +301,14 @@ public class MovieListService {
     public MovieDTO noSearchResultInfoId(int id){
         log.info("id : {} 인 Movie/Comment가 DB에 없습니다.", id);
         MovieDTO movieDTO = new MovieDTO();
-        movieDTO.setStatementCode(StatementCode.SC_NoResult);
+        movieDTO.setStateCode(StateCode.SC_NoResult);
         return movieDTO;
     }
 
     public MovieDTO noSearchResultInfoTitle(String title){
         log.info("제목 : {}인 Movie가 DB에 없습니다.", title);
         MovieDTO movieDTO = new MovieDTO();
-        movieDTO.setStatementCode(StatementCode.SC_NoResult);
+        movieDTO.setStateCode(StateCode.SC_NoResult);
         return movieDTO;
     }
 

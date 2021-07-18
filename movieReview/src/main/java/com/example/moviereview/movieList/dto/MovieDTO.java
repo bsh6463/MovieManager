@@ -1,13 +1,11 @@
 package com.example.moviereview.movieList.dto;
 
-import com.example.moviereview.movieList.comment.CommentEntity;
-import com.example.moviereview.util.StatementCode;
+import com.example.moviereview.util.StateCode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.lang.Nullable;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +20,7 @@ public class MovieDTO {
 
     private String message;
 
-    private StatementCode statementCode;
+    private StateCode stateCode;
 
 
     @Nullable
