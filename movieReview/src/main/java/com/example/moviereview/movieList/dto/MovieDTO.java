@@ -18,7 +18,7 @@ public class MovieDTO {
 
     private String title;
 
-    private String message;
+   // private String message;
 
     private StateCode stateCode;
 

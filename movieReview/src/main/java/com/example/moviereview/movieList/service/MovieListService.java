@@ -110,7 +110,9 @@ public class MovieListService {
 
 
         if(movieEntity != null){
-            return movieEntityToDTO(movieEntity);
+            var movieDTO = movieEntityToDTO(movieEntity);
+            movieDTO.setStateCode(StateCode.SC_OK);
+            return movieDTO;
         }
         else {
 
@@ -143,6 +145,7 @@ public class MovieListService {
                 movieDTO.setSubtitle(temp.get().getSubtitle());
                 movieDTO.setImage(temp.get().getImage());
                 movieDTO.setUserRating(temp.get().getUserRating());
+                movieDTO.setStateCode(StateCode.SC_OK);
 
             }
             return movieDTO;
@@ -182,7 +185,10 @@ public class MovieListService {
             commentRepository.flush();
             movieRepository.flush();
 
-            return movieEntityToDTO(movieEntity);
+            MovieDTO movieDTO = movieEntityToDTO(movieEntity);
+            movieDTO.setStateCode(StateCode.SC_OK);
+
+            return movieDTO;
         }
         else {
 
@@ -213,7 +219,9 @@ public class MovieListService {
             commentRepository.flush();
             movieRepository.flush();
 
-            return movieEntityToDTO(movieEntity);
+            MovieDTO movieDTO = movieEntityToDTO(movieEntity);
+            movieDTO.setStateCode(StateCode.SC_OK);
+            return movieDTO;
 
         }
         else {

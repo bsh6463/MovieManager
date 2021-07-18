@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml">
+
+<head>
+
+    <meta charset="UTF-8">
+    <title>영화 Review</title>
+</head>
+<body>
+<div class="title"><h1>영화리뷰 관리</h1></div>
+
+<div class="row">
+    <div class="col-sm-6 col-md-8">
+        <input id="searchBox" style="height: 46px" class="form-control form-control-lg" type="text" placeholder="영화를 검색해주세요" value="날씨의 아이">
+    </div>
+    <div class="col-sm-6 col-md-4">
+        <button id="searchButton" type="button" class="btn btn-primary btn-lg" style="width: 100%">검색</button>
+    </div>
+</div>
+
+<div id="search-result">
+    <div class="image">
+        <img id="movie_image" v-bind:src="search_result.image" alt="..." class="img-thumbnail" style="min-width: 100%; min-height: 100%;">
+
+    </div>
+    <div class="movieInfo">
+        <div class="col-sm-6 col-md-4">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item" id="movie_title">제목 : {{search_result.title}}</li>
+                <li class="list-group-item" id="movie_director">감독 : {{search_result.director}}</li>
+                <li class="list-group-item" id="movie_actor">배우 : {{search_result.actor}}</li>
+                <li class="list-group-item" id="movie_userRating">평점 : {{search_result.userRating}}</li>
+            </ul>
+            <br>
+            <br>
+            <br>
+            <button id="addButton" type="button" class="btn btn-primary btn-lg"
+                    style="width: 96%; position: absolute; bottom: 0">Add To DB
+            </button>
+        </div>
+
+    </div>
+</div>
+<br>
+<div id="DBList">
+    <div id="DBTitle"><h2>내가 본 영화 List</h2></div>
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="DB검색 제목" aria-label="Recipient's username"
+               aria-describedby="button-addon3">
+        <button class="btn btn-outline-secondary" type="button" id="button-addon3">검색</button>
+    </div>
+    <div id="movie-list">
+        <div v-for="movie in movie_list">
+            <br/>
+            <hr/>
+            <div class="row">
+                <div class="col-sm-6 col-md-8">
+                    <img v-bind:src="movie.image"
+                         alt="..."
+                         class="img-thumbnail"
+                         style="min-width: 100%;
+                         min-height: 100%;"
+                    >
+                </div>
+                <div class="col-sm-6 col-md-4">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">제목 : {{movie.title}}</li>
+                        <li class="list-group-item">감독 : {{movie.director}}</li>
+                        <li class="list-group-item">배우 : {{movie.actor}}</li>
+                        <li class="list-group-item">평점 : {{movie.userRating}}</li>
+                        <li class="list-group-item">
+                            <button v-on:click="deleteMovie(movie.index)" type="button" class="btn btn-primary btn-lg"
+                                    style="width: 100%;">리스트에서 삭제
+                            </button>
+                        </li>
+                        <li class="list-group-item"></li>
+                    </ul>
+                </div>
+                <br/>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+
+<!-- jQuery (부트스트랩의 자바스크립트 플러그인을 위해 필요합니다) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+
+
+
+<!-- CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+
+<!-- 합쳐지고 최소화된 최신 자바스크립트 -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+
+<!-- 개발버전, 도움되는 콘솔 경고를 포함. -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="/js/main2.js"></script>
+</html>

@@ -56,7 +56,7 @@ public class ApiController {
 
 
 
-    @GetMapping("/get")
+    @GetMapping("/get/all")
     public List<MovieDTO> findMovie(){
 
         var result = movieListService.getMovieList();
