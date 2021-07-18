@@ -36,13 +36,26 @@ public class MovieListService {
     //add to list
     public MovieDTO addToMovieList(MovieDTO movieDTO){
 
-        var movieEntity = movieDTOToEntity(movieDTO);
+        //DB에 해당 영화가 존재하는지 확인
+        if (movieRepository.existsByTitle(movieDTO.getTitle())) {
 
-        movieRepository.saveAndFlush(movieEntity);
+            log.info("중복저장 불가");
+            movieDTO.setStateCode(StateCode.SC_OVERLAPPED);
 
-        movieDTO.setStateCode(StateCode.SC_OK);
+            return movieDTO;
 
-        return movieDTO;
+        } else {
+
+            var movieEntity = movieDTOToEntity(movieDTO);
+
+            movieRepository.saveAndFlush(movieEntity);
+
+            movieDTO.setStateCode(StateCode.SC_OK);
+
+            return movieDTO;
+
+        }
+
 
     }
 
