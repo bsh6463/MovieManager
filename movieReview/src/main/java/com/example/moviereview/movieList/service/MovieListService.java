@@ -7,6 +7,8 @@ import com.example.moviereview.movieList.movie.MovieEntity;
 import com.example.moviereview.movieList.comment.CommentEntity;
 import com.example.moviereview.movieList.repository.CommentRepository;
 import com.example.moviereview.movieList.repository.MovieRepository;
+import com.example.moviereview.naver.dto.SearchImageReq;
+import com.example.moviereview.naver.dto.SearchImageRes;
 import com.example.moviereview.naver.dto.SearchMovieReq;
 import com.example.moviereview.naver.dto.SearchMovieRes;
 import com.example.moviereview.naver.naverClient.NaverClient;
@@ -125,7 +127,7 @@ public class MovieListService {
     public MovieDTO searchMovie(String query){
 
         SearchMovieReq searchMovieReq = new SearchMovieReq();
-        searchMovieReq.setQuery(query);
+        searchMovieReq.setQuery("영화"+query);
 
         SearchMovieRes searchMovieRes = naverClient.searchMovie(searchMovieReq);
 
@@ -138,16 +140,40 @@ public class MovieListService {
 
             if(temp.isPresent()) {
 
+
+
                 movieDTO.setTitle(temp.get().getTitle().replaceAll("<[^>]*>",""));
                 movieDTO.setActor(temp.get().getActor());
                 movieDTO.setDirector(temp.get().getDirector());
                 movieDTO.setLink(temp.get().getLink());
                 movieDTO.setSubtitle(temp.get().getSubtitle());
-                movieDTO.setImage(temp.get().getImage());
+                //movieDTO.setImage(temp.get().getImage());
                 movieDTO.setUserRating(temp.get().getUserRating());
                 movieDTO.setStateCode(StateCode.SC_OK);
 
             }
+
+            //이미지 검색
+            SearchImageReq searchImageReq = new SearchImageReq();
+            searchImageReq.setQuery("영화"+query);
+            SearchImageRes searchImageRes =  naverClient.searchImage(searchImageReq);
+
+            if(searchImageRes.getTotal() > 0){
+                var tempImageItem = searchImageRes.getItems().stream().findFirst();
+
+                if(tempImageItem.isPresent()){
+                    var imageItem = tempImageItem.get();
+                    movieDTO.setStateCode(StateCode.SC_OK);
+                    movieDTO.setImage(imageItem.getLink());
+                }
+            }
+            else {
+
+                log.info("해당 이미지가 없습니다.");
+                movieDTO.setStateCode(StateCode.SC_NoResult);
+
+            }
+
             return movieDTO;
         }
         else{
@@ -159,6 +185,8 @@ public class MovieListService {
             return  movieDTO;
         }
     }
+
+
 
     public void deleteMovieWithId(int id) {
 

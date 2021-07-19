@@ -1,5 +1,7 @@
 package com.example.moviereview.naver.naverClient;
 
+import com.example.moviereview.naver.dto.SearchImageReq;
+import com.example.moviereview.naver.dto.SearchImageRes;
 import com.example.moviereview.naver.dto.SearchMovieReq;
 import com.example.moviereview.naver.dto.SearchMovieRes;
 import lombok.AllArgsConstructor;
@@ -35,6 +37,9 @@ public class NaverClient {
 
     @Value("${naver.url.search.movie}")
     private String naverMovieSearchUrl;
+
+    @Value("${naver.url.search.image}")
+    private String naverImageSearchUrl;
 
 
     public SearchMovieRes searchMovie(SearchMovieReq searchMovieReq){
@@ -81,6 +86,45 @@ public class NaverClient {
         return responseEntity.getBody();
 
         }
+
+
+    public SearchImageRes searchImage(SearchImageReq searchImageReq){
+
+
+        //url 생성
+        URI uri = UriComponentsBuilder.fromUriString(naverImageSearchUrl)
+                .queryParams(searchImageReq.toMultiValueMap())
+                .build()
+                .encode()
+                .toUri();
+
+
+
+        //JSON형태 header생성
+        var headers = new HttpHeaders();
+        headers.set("X-Naver-Client-Id", naverClientId);
+        headers.set("X-Naver-Client-Secret", naverClientSecret);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+
+        //HttpEntity
+
+        //httpentity에 헤더
+        var httpEntity = new HttpEntity<>(headers);
+
+        var responseType = new ParameterizedTypeReference<SearchImageRes>(){};
+
+
+        var responseEntity = new RestTemplate().exchange(
+                uri,
+                HttpMethod.GET,
+                httpEntity,
+                responseType
+        );
+
+        return responseEntity.getBody();
+
+    }
 
 
 

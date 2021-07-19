@@ -17,7 +17,6 @@ public class ApiController {
 
     @GetMapping("/search")
     public MovieDTO movieSearch(@RequestParam String query){
-
        return movieListService.searchMovie(query);
 
     }
