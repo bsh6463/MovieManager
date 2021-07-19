@@ -149,7 +149,7 @@ public class MovieListService {
                 movieDTO.setSubtitle(temp.get().getSubtitle());
                 //movieDTO.setImage(temp.get().getImage());
                 movieDTO.setUserRating(temp.get().getUserRating());
-                movieDTO.setStateCode(StateCode.SC_OK);
+
 
             }
 

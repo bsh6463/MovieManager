@@ -99,7 +99,6 @@ public class NaverClient {
                 .toUri();
 
 
-
         //JSON형태 header생성
         var headers = new HttpHeaders();
         headers.set("X-Naver-Client-Id", naverClientId);

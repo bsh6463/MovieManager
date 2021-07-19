@@ -21,15 +21,17 @@
         },
         methods: {
 
-            deleteMovie: function (index) {
+            deleteMovie: function (id) {
                 $.ajax({
                     type: "DELETE" ,
                     async: true ,
-                    url: `/api/delete/movie/${index}`,
+                    url: `/api/delete/movie/${id}`,
                     timeout: 3000
                 });
-                getMovie();
+
+               getMovieList();
             }
+
         }
     });
 
@@ -65,12 +67,12 @@
 
             },
             success: function (response, status, request) {
-                getMovie();
+                getMovieList();
             }
         });
     });
 
-    function getMovie(){
+    function getMovieList(){
         $.get(`/api/get/all`, function (response) {
             movie_list.movie_list = response;
         });
