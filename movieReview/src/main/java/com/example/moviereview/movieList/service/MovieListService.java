@@ -17,6 +17,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -61,7 +62,7 @@ public class MovieListService {
 
     }
 
-
+    //@Transactional
     public List<MovieDTO> getMovieList() {
 
 
@@ -188,10 +189,11 @@ public class MovieListService {
 
 
 
-
+    //@Transactional
     public void deleteMovieWithId(int id) {
 
         movieRepository.deleteById(id);
+
     }
 
 

@@ -26,10 +26,15 @@
                     type: "DELETE" ,
                     async: true ,
                     url: `/api/delete/movie/${id}`,
-                    timeout: 3000
-                });
+                    timeout: 3000,
+                    error: function (request, status, error) {
 
-               getMovieList();
+                    },
+                    success: function (response, status, request) {
+                        getMovieList();
+                    }
+                });
+                //getMovieList();
             }
 
         }

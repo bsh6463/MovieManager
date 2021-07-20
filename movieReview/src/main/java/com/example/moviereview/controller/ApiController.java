@@ -3,6 +3,7 @@ package com.example.moviereview.controller;
 import com.example.moviereview.movieList.dto.MovieDTO;
 import com.example.moviereview.movieList.service.MovieListService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
