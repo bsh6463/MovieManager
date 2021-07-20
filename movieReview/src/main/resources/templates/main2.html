@@ -71,6 +71,16 @@
                         <li class="list-group-item">감독 : {{movie.director}}</li>
                         <li class="list-group-item">배우 : {{movie.actor}}</li>
                         <li class="list-group-item">평점 : {{movie.userRating}}</li>
+                        <li class="list-group-item">리뷰 : {{movie.commentDTOs}}</li>
+                        <li class="list-group-item">
+                            <div>
+                            <input id="commentBox" style="height: 46px" class="form-control form-control-lg" type="text"
+                                               placeholder="comment 입력" value="">
+                            </div>
+                            <button v-on:click="addComment(movie.id)" type="button" class="btn btn-primary btn-lg"
+                                    style="width: 100%;">입력
+                            </button>
+                        </li>
                         <li class="list-group-item">
                             <button v-on:click="deleteMovie(movie.id)" type="button" class="btn btn-primary btn-lg"
                                     style="width: 100%;">리스트에서 삭제

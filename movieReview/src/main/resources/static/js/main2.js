@@ -35,10 +35,30 @@
                     }
                 });
                 //getMovieList();
+            },
+
+            addComment: function (id) {
+                const content = $("#commentBox").val();
+                $.ajax({
+                    type: "POST" ,
+                    async: true ,
+                    url: `/api/comment/${id}?content=${content}`,
+                    timeout: 3000,
+                    error: function (request, status, error) {
+
+                    },
+                    success: function (response, status, request) {
+                        getMovieList();
+                    }
+                });
+                //getMovieList();
             }
 
         }
     });
+
+
+
 
     // search
     $("#searchButton").click(function () {
@@ -59,6 +79,8 @@
             });
         }
     });
+
+
 
     $("#addButton").click(function () {
         $.ajax({

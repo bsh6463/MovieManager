@@ -40,8 +40,8 @@ public class ApiController {
          return movieListService.addCommentByTitle(title, content);
 
     }
-    @PostMapping("/comment/id")
-    public MovieDTO addCommentByTitle(@RequestParam int id, @RequestParam String content){
+    @PostMapping("/comment/{id}")
+    public MovieDTO addCommentById(@PathVariable int id, @RequestParam String content){
 
         return movieListService.addCommentById(id, content);
 
